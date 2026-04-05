@@ -1,0 +1,28 @@
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+pydantic
+pydantic-settings
+# The "Big 5" LangChain Stack (pinned to compatible versions)
+langchain
+langchain-community
+langchain-core
+langchain-openai
+langchain-qdrant
+langchain-text-splitters
+langchain-classic
+# Data & Drivers
+pypdf
+tiktoken
+qdrant-client
+minio
+redis
+psycopg2-binary
+sqlalchemy
+rq
+
+svix
+fastapi-clerk-auth
+
+razorpay

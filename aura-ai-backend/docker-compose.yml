@@ -1,0 +1,49 @@
+services:
+  # Relational Database for Metadata
+  postgres:
+    image: postgres:15
+    container_name: aura_postgres
+    environment:
+      POSTGRES_USER: aura_user
+      POSTGRES_PASSWORD: aura_password
+      POSTGRES_DB: aura_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Object Storage for PDFs and Videos
+  minio:
+    image: minio/minio
+    container_name: aura_minio
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password123
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000" # API port
+      - "9001:9001" # Web UI port
+    volumes:
+      - minio_data:/data
+
+  # Vector Database for Embeddings
+  qdrant:
+    image: qdrant/qdrant
+    container_name: aura_qdrant
+    ports:
+      - "6333:6333" # API port
+      - "6334:6334" # gRPC port
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  # Caching and Async Tasks
+  redis:
+    image: redis:latest
+    container_name: aura_redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
+  minio_data:
+  qdrant_data:
