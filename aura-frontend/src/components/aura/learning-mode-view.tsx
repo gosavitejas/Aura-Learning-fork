@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useApi } from "@/hooks/useApi"
 import { useUser } from "@clerk/clerk-react"
+import { useNavigate, useParams } from "react-router-dom"
 import {
   PlayCircle,
   ArrowLeft,
@@ -52,19 +53,15 @@ interface QuizQuestion {
 
 type TabType = "quiz" | "discussion" | "notes"
 
-export function LearningModeView({
-  courseId,
-  onBack,
-}: {
-  courseId: string | number | null
-  onBack: () => void
-}) {
+export function LearningModeView() {
   const [activeTab, setActiveTab] = useState<TabType>("quiz")
   const [course, setCourse] = useState<Course | null>(null)
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const api = useApi()
+  const navigate = useNavigate()
+  const { courseId } = useParams()
 
   // 1. Fetch Curriculum
   useEffect(() => {
@@ -134,7 +131,7 @@ export function LearningModeView({
     return (
       <main className="max-w-7xl mx-auto px-6 pt-32 text-center">
         <h2 className="text-2xl font-bold text-slate-900 mb-4">Course Not Found</h2>
-        <button onClick={onBack} className="text-blue-600 hover:underline">Return to Dashboard</button>
+        <button onClick={() => navigate("/dashboard")} className="text-blue-600 hover:underline">Return to Dashboard</button>
       </main>
     )
   }
@@ -144,7 +141,7 @@ export function LearningModeView({
     <main className="max-w-7xl mx-auto px-6 pt-28 pb-24">
       <motion.button
         initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}
-        onClick={onBack}
+        onClick={() => navigate("/dashboard")}
         className="flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer mb-6"
       >
         <ArrowLeft size={18} />

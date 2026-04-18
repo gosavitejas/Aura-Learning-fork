@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useApi } from "@/hooks/useApi"
 import { useUser } from "@clerk/clerk-react" 
+import { useNavigate, useParams } from "react-router-dom"
 import {
   ArrowLeft,
   Clock,
@@ -97,21 +98,15 @@ const loadRazorpayScript = () => {
   });
 };
 
-export function CourseDetailsView({
-  courseId,
-  onBack,
-  onStartCourse,
-}: {
-  courseId: string | number | null 
-  onBack: () => void
-  onStartCourse?: () => void
-}) {
+export function CourseDetailsView() {
   const [activeTab, setActiveTab] = useState<TabType>("syllabus")
   const [course, setCourse] = useState<Course | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
   
   const api = useApi();
+  const navigate = useNavigate()
+  const { courseId } = useParams()
   const { user } = useUser(); 
 
   useEffect(() => {
@@ -169,9 +164,9 @@ export function CourseDetailsView({
               razorpay_signature: response.razorpay_signature,
             });
 
-            if (verifyRes.data?.status === "success") {
-              if (onStartCourse) onStartCourse();
-            }
+             if (verifyRes.data?.status === "success") {
+               navigate(`/learn/${courseId}`);
+             }
           } catch (verifyError: any) {
             console.error("Verification error:", verifyError);
             alert("Payment verification failed. If money was deducted, please contact support.");
@@ -211,7 +206,7 @@ export function CourseDetailsView({
     return (
       <main className="max-w-6xl mx-auto px-6 pt-32 pb-24 text-center">
         <h2 className="text-2xl font-bold text-slate-900 mb-4">Course Not Found</h2>
-        <button onClick={onBack} className="text-blue-600 hover:underline">Return to Catalog</button>
+        <button onClick={() => navigate("/catalog")} className="text-blue-600 hover:underline">Return to Catalog</button>
       </main>
     )
   }
@@ -226,7 +221,7 @@ export function CourseDetailsView({
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.4 }}
-        onClick={onBack}
+        onClick={() => navigate("/catalog")}
         className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer mb-8"
       >
         <ArrowLeft size={18} />
@@ -324,7 +319,7 @@ export function CourseDetailsView({
               whileTap={{ scale: 0.98 }}
               disabled={isProcessingPayment}
               onClick={() => {
-                if (isCreator) onStartCourse?.(); 
+                if (isCreator) navigate(`/learn/${course.id}`);
                 else handleBuyNow();
               }}
               className={`relative overflow-hidden w-full rounded-2xl py-4 text-lg font-bold transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-80 disabled:cursor-not-allowed ${

@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion"
 import { ArrowLeft } from "lucide-react"
+import { useAuth } from "@clerk/clerk-react"
+import { useNavigate, useParams } from "react-router-dom"
 
 const legalContent: Record<string, { title: string; body: string }> = {
   About: {
@@ -72,14 +74,19 @@ We typically respond within 24 hours during business days. For urgent technical 
   },
 }
 
-export function LegalView({
-  page,
-  onBack,
-}: {
-  page: string
-  onBack: () => void
-}) {
-  const content = legalContent[page] ?? legalContent["About"]
+export function LegalView() {
+  const { page } = useParams()
+  const { isSignedIn } = useAuth()
+  const navigate = useNavigate()
+
+  const normalizedPage = (page || "about").toLowerCase()
+  const pageMap: Record<string, string> = {
+    about: "About",
+    privacy: "Privacy",
+    terms: "Terms",
+    contact: "Contact",
+  }
+  const content = legalContent[pageMap[normalizedPage] ?? "About"]
 
   return (
     <main className="max-w-3xl mx-auto px-6 pt-32 pb-24">
@@ -87,7 +94,7 @@ export function LegalView({
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.4 }}
-        onClick={onBack}
+        onClick={() => navigate(isSignedIn ? "/dashboard" : "/")}
         className="flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer mb-8"
       >
         <ArrowLeft size={18} />

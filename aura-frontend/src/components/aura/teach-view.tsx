@@ -5,18 +5,18 @@ import { motion } from "framer-motion"
 import { GraduationCap, Loader2 } from "lucide-react"
 import type { RoleType } from "@/App"
 import { useApi } from "@/hooks/useApi"
+import { useNavigate } from "react-router-dom"
 
 export function TeachView({
   role,
-  onApplicationSuccess,
 }: {
   role: RoleType
-  onApplicationSuccess: () => void
 }) {
+  const navigate = useNavigate()
   return (
     <main className="max-w-3xl mx-auto px-6 pt-32 pb-24">
       {role === "student" ? (
-        <StudentApplicationForm onSuccess={onApplicationSuccess} />
+        <StudentApplicationForm />
       ) : (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -43,11 +43,7 @@ export function TeachView({
    STUDENT: Become an Instructor Application
    ════════════════════════════════════════════════ */
 
-function StudentApplicationForm({
-  onSuccess,
-}: {
-  onSuccess: () => void
-}) {
+function StudentApplicationForm() {
   const [fullName, setFullName] = useState("")
   const [expertise, setExpertise] = useState("")
   const [portfolioUrl, setPortfolioUrl] = useState("")
@@ -55,6 +51,7 @@ function StudentApplicationForm({
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const api = useApi()
+  const navigate = useNavigate()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -71,7 +68,7 @@ function StudentApplicationForm({
         motivation: bio
       });
 
-      onSuccess(); // Trigger the success state in App.tsx
+      navigate("/application-success");
 
     } catch (error: any) {
       console.error("Application failed:", error);

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useUser } from "@clerk/clerk-react"
 import { useApi } from "@/hooks/useApi"
 import { useNotification } from "@/contexts/NotificationContext"
+import { useNavigate } from "react-router-dom"
 import {
   BookOpen,
   Clock,
@@ -99,14 +100,8 @@ const getGradientForId = (id: string | number) => {
 
 export function DashboardView({
   role,
-  onCourseClick,
-  onContinueLearning,
-  onCreateCourse,
 }: {
   role: RoleType
-  onCourseClick?: (courseId: number | string) => void
-  onContinueLearning?: (courseId?: string) => void // Updated to accept specific course targets
-  onCreateCourse?: () => void
 }) {
   const { user } = useUser();
   const firstName = user?.firstName || (role === "student" ? "Student" : "Instructor");
@@ -128,11 +123,7 @@ export function DashboardView({
         </p>
       </motion.div>
 
-      {role === "student" ? (
-        <StudentDashboard onContinueLearning={onContinueLearning} />
-      ) : (
-        <InstructorDashboard onCreateCourse={onCreateCourse} onCourseClick={onCourseClick} />
-      )}
+      {role === "student" ? <StudentDashboard /> : <InstructorDashboard />}
     </main>
   )
 }
@@ -141,12 +132,9 @@ export function DashboardView({
    🚀 WIRED: STUDENT DASHBOARD
    ════════════════════════════════════════════════════ */
 
-function StudentDashboard({
-  onContinueLearning,
-}: {
-  onContinueLearning?: (courseId?: string) => void
-}) {
+function StudentDashboard() {
   const api = useApi();
+  const navigate = useNavigate()
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [enrolledCourses, setEnrolledCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -247,8 +235,7 @@ function StudentDashboard({
             whileTap={{ scale: 0.97 }}
             onClick={() => {
               if (metrics?.resume_target?.course_id) {
-                // Route exactly to the course they were watching
-                onContinueLearning?.(metrics.resume_target.course_id);
+                navigate(`/learn/${metrics.resume_target.course_id}`)
               }
             }}
             disabled={!metrics?.resume_target}
@@ -279,7 +266,7 @@ function StudentDashboard({
               <motion.div
                 key={course.id}
                 variants={cardVariants}
-                onClick={() => onContinueLearning?.(course.id)}
+                onClick={() => navigate(`/learn/${course.id}`)}
                 className="group cursor-pointer bg-white/60 backdrop-blur-2xl border border-purple-200/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_30px_60px_rgba(0,0,0,0.12)] rounded-[2rem] overflow-hidden flex flex-col transition-all duration-500 hover:-translate-y-1.5 relative"
               >
                 {/* Ambient Glow */}
@@ -360,13 +347,7 @@ function StudentDashboard({
 
 
 
-export function InstructorDashboard({
-  onCreateCourse,
-  onCourseClick,
-}: {
-  onCreateCourse?: () => void
-  onCourseClick?: (courseId: string) => void
-}) {
+export function InstructorDashboard() {
   const [myCourses, setMyCourses] = useState<Course[]>([])
   const [isLoadingCourses, setIsLoadingCourses] = useState(true)
 
@@ -380,6 +361,7 @@ export function InstructorDashboard({
   const [isDeleting, setIsDeleting] = useState(false)
 
   const api = useApi();
+  const navigate = useNavigate()
   const { user } = useUser();
   const { showNotification } = useNotification(); // 🚀 God Mode Access
 
@@ -518,7 +500,7 @@ export function InstructorDashboard({
         <div className="bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-8 md:p-10">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold tracking-tight text-slate-900">Your Courses</h2>
-            <button onClick={() => onCreateCourse?.()} className="rounded-full bg-slate-900 text-white px-6 py-2.5 text-sm font-semibold hover:bg-slate-800 transition-colors cursor-pointer">
+            <button onClick={() => navigate("/teach/course-builder")} className="rounded-full bg-slate-900 text-white px-6 py-2.5 text-sm font-semibold hover:bg-slate-800 transition-colors cursor-pointer">
               Create New Course
             </button>
           </div>
@@ -539,7 +521,7 @@ export function InstructorDashboard({
               myCourses.map((course) => (
                 <div
                   key={course.id}
-                  onClick={() => onCourseClick?.(course.id)}
+                  onClick={() => navigate(`/courses/${course.id}`)}
                   className="flex items-center justify-between bg-white/50 backdrop-blur-xl border border-white/60 rounded-2xl px-6 py-5 cursor-pointer hover:bg-white/70 transition-colors"
                 >
                   <div className="flex-1">

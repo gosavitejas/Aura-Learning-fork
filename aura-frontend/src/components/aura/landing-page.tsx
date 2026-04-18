@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useNavigate } from "react-router-dom"
 import {
   Sparkles,
   Brain,
@@ -109,13 +110,8 @@ const itemVariants = {
   },
 }
 
-export function LandingPage({
-  onEnter,
-  onLegalClick,
-}: {
-  onEnter: () => void
-  onLegalClick: (page: string) => void
-}) {
+export function LandingPage() {
+  const navigate = useNavigate()
   return (
     <div className="relative min-h-screen">
       {/* Hero Section */}
@@ -157,7 +153,7 @@ export function LandingPage({
 
           <motion.button
             variants={itemVariants}
-            onClick={onEnter}
+            onClick={() => navigate("/auth")}
             className="mt-10 rounded-full bg-slate-900 text-white px-10 py-4 text-lg font-semibold shadow-[0_0_40px_rgba(59,130,246,0.3)] hover:shadow-[0_0_60px_rgba(59,130,246,0.45)] hover:bg-slate-800 transition-all duration-300 cursor-pointer"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
@@ -344,7 +340,7 @@ export function LandingPage({
             {["About", "Privacy", "Terms", "Contact"].map((link) => (
               <button
                 key={link}
-                onClick={() => onLegalClick(link)}
+                onClick={() => navigate(`/legal/${link.toLowerCase()}`)}
                 className="text-base font-medium text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
               >
                 {link}
