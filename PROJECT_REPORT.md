@@ -733,14 +733,14 @@ aura-frontend/
 
 ### State Management
 
-The application uses **local React state** (`useState`, `useEffect`) with no external state management library (no Redux / Zustand). The primary state container is `App.tsx`, which manages:
-- `currentView` — the active screen (replaces URL routing)
+The application uses **local React state** (`useState`, `useEffect`) with no external state management library (no Redux / Zustand). The primary top-level state in `App.tsx` manages:
 - `role` — the authenticated user's database role
-- `selectedCourseId` — the course in context
+- authentication sync/loading guards
+- globally mounted shell behavior (navbar/notifications/chat visibility rules)
 
 ### Routing Strategy
 
-The application uses **view-based navigation** (a custom `ViewType` string state) rather than URL-based routing. This is a Single-Page Application that replaces the entire page content based on `currentView`. `AnimatePresence` from Framer Motion handles page transition animations.
+The application uses **URL-based routing** via `react-router-dom` (e.g., `/dashboard`, `/catalog`, `/courses/:courseId`, `/learn/:courseId`, `/legal/:page`). Route guards in `App.tsx` handle authentication and role-based access control, and `AnimatePresence` from Framer Motion handles page transition animations.
 
 ### API Communication
 

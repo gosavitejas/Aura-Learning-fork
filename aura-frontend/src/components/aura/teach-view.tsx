@@ -5,14 +5,12 @@ import { motion } from "framer-motion"
 import { GraduationCap, Loader2 } from "lucide-react"
 import type { RoleType } from "@/App"
 import { useApi } from "@/hooks/useApi"
-import { useNavigate } from "react-router-dom"
 
 export function TeachView({
   role,
 }: {
   role: RoleType
 }) {
-  const navigate = useNavigate()
   return (
     <main className="max-w-3xl mx-auto px-6 pt-32 pb-24">
       {role === "student" ? (

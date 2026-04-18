@@ -70,9 +70,9 @@ export function AuraChat({ courseId }: { courseId?: string | number | null }) {
 
   // 2. Auto-sync the dropdown if the user navigates into a specific course
   useEffect(() => {
-    const activeCourseId = routeCourseId ?? courseId
-    if (activeCourseId) {
-      setSelectedContext(String(activeCourseId));
+    const resolvedCourseId = routeCourseId ?? courseId
+    if (resolvedCourseId) {
+      setSelectedContext(String(resolvedCourseId));
     } else {
       setSelectedContext("");
     }
