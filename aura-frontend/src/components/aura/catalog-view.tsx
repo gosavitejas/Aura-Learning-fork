@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useUser } from "@clerk/clerk-react" // 🚀 Role Checking
 import { useApi } from "@/hooks/useApi"
 import { useNotification } from "@/contexts/NotificationContext" // 🚀 God Mode Notifications
+import { useNavigate } from "react-router-dom"
 import {
   Search,
   BookOpen,
@@ -77,11 +78,7 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
 }
 
-export function CatalogView({
-  onCourseClick,
-}: {
-  onCourseClick: (courseId: string, isEnrolled: boolean) => void
-}) {
+export function CatalogView() {
   const [search, setSearch] = useState("")
   const [activeCategory, setActiveCategory] = useState("All")
   const [courses, setCourses] = useState<Course[]>([])
@@ -93,6 +90,7 @@ export function CatalogView({
   const [deleteConfirmText, setDeleteConfirmText] = useState("")
 
   const api = useApi();
+  const navigate = useNavigate()
   const { user } = useUser();
   const { showNotification } = useNotification();
 
@@ -235,7 +233,11 @@ export function CatalogView({
                 <motion.div
                   key={course.id}
                   variants={cardVariants}
-                  onClick={() => !isAdmin && onCourseClick(String(course.id), isEnrolled)}
+                  onClick={() => {
+                    if (!isAdmin) {
+                      navigate(isEnrolled ? `/learn/${course.id}` : `/courses/${course.id}`)
+                    }
+                  }}
                   className={`group ${!isAdmin ? 'cursor-pointer hover:-translate-y-1.5 hover:shadow-[0_30px_60px_rgba(0,0,0,0.12)]' : ''} bg-white/60 backdrop-blur-2xl border ${isEnrolled ? "border-purple-200/50" : course.status === 'Banned' ? "border-red-500/50" : "border-white/80"} shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-[2rem] overflow-hidden flex flex-col transition-all duration-500 relative`}
                 >
 

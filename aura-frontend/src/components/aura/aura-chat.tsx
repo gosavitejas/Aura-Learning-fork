@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
   Sparkles, 
@@ -11,6 +11,7 @@ import {
   Check        // 🚀 NEW: For the Active Highlighter
 } from "lucide-react"
 import { useApi } from "@/hooks/useApi"
+import { matchPath, useLocation } from "react-router-dom"
 
 type Message = {
   id: string
@@ -40,6 +41,15 @@ export function AuraChat({ courseId }: { courseId?: string | number | null }) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const api = useApi()
+  const location = useLocation()
+
+  const routeCourseId = useMemo(() => {
+    const pathname = location.pathname
+    const routeMatch =
+      matchPath("/courses/:courseId", pathname) ||
+      matchPath("/learn/:courseId", pathname)
+    return routeMatch?.params.courseId ?? null
+  }, [location.pathname])
 
   // 1. Fetch available chat contexts (enrolled + created courses) when chat opens
   useEffect(() => {
@@ -60,12 +70,13 @@ export function AuraChat({ courseId }: { courseId?: string | number | null }) {
 
   // 2. Auto-sync the dropdown if the user navigates into a specific course
   useEffect(() => {
-    if (courseId) {
-      setSelectedContext(String(courseId));
+    const resolvedCourseId = routeCourseId ?? courseId
+    if (resolvedCourseId) {
+      setSelectedContext(String(resolvedCourseId));
     } else {
       setSelectedContext("");
     }
-  }, [courseId]);
+  }, [courseId, routeCourseId]);
 
   // Auto-scroll to bottom
   useEffect(() => {

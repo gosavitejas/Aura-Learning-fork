@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useApi } from "@/hooks/useApi"
+import { useNavigate } from "react-router-dom"
 import {
   ArrowLeft,
   GripVertical,
@@ -34,12 +35,9 @@ type Module = {
 
 const CATEGORIES = ["AI", "Development", "Design", "Business", "General"]
 
-export function InstructorCourseBuilderView({
-  onBack,
-}: {
-  onBack: () => void
-}) {
+export function InstructorCourseBuilderView() {
   const api = useApi();
+  const navigate = useNavigate()
   
   // ── Flow State ──
   const [step, setStep] = useState<1 | 2>(1)
@@ -141,7 +139,7 @@ export function InstructorCourseBuilderView({
       await api.put(`/api/v1/courses/${courseId}/publish`);
 
       // 4. Return to Dashboard triumphantly
-      onBack();
+      navigate("/dashboard");
 
     } catch (error) {
       console.error("Failed to publish curriculum:", error);
@@ -206,7 +204,7 @@ export function InstructorCourseBuilderView({
         className="flex items-center justify-between mb-8"
       >
         <button
-          onClick={onBack}
+          onClick={() => navigate("/dashboard")}
           className="flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
         >
           <ArrowLeft size={18} />

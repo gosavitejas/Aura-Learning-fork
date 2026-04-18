@@ -2,12 +2,10 @@
 
 import { motion } from "framer-motion"
 import { CheckCircle2, ArrowRight } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
-export function ApplicationSuccessView({
-  onBackToDashboard,
-}: {
-  onBackToDashboard: () => void
-}) {
+export function ApplicationSuccessView() {
+  const navigate = useNavigate()
   return (
     <main className="min-h-screen flex items-center justify-center px-6">
       <motion.div
@@ -35,7 +33,7 @@ export function ApplicationSuccessView({
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={onBackToDashboard}
+          onClick={() => navigate("/dashboard")}
           className="inline-flex items-center gap-2 rounded-full bg-slate-900 text-white px-8 py-4 text-base font-semibold shadow-[0_0_40px_rgba(59,130,246,0.25)] hover:shadow-[0_0_60px_rgba(59,130,246,0.35)] hover:bg-slate-800 transition-all cursor-pointer"
         >
           Back to Dashboard
